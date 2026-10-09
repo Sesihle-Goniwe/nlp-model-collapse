@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Big files: make them again from a seed, or share them another way
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+data_cache/
+*.npz
+*.npy
+*.h5
+
+# Run outputs (keep the final figures in results/figures/)
+runs/
+wandb/
+logs/
+results/*
+!results/figures/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
