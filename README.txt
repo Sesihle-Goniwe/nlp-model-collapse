@@ -73,7 +73,42 @@ Step 2 - Train the base model (about 2 to 5 minutes on a laptop CPU):
        python train.py --n_queries 2 --init_from results/base_single/model.pt --out_dir results/extended_warm
 
 Step 3 - Run the model collapse loop:
-       (to be added: collapse.py)
+
+   Base task (10 generations):
+       python collapse.py --task base --init_from results/base_single/model.pt --generations 10
+
+   This uses the trained base model as Generation 0. Each later generation is
+   trained on synthetic answers produced by the previous generation.
+
+   Base collapse results are saved to:
+       results/collapse/base/
+
+   Extended task:
+   First create the warm-started Generation 0 extended model:
+       python train.py --n_queries 2 --init_from results/base_single/model.pt --out_dir results/extended_warm
+
+   Then run the recursive collapse experiment:
+       python collapse.py --task extended --init_from results/extended_warm/model.pt --base_init_from results/base_single/model.pt --generations 10 --out_dir results/collapse/extended_warmstart
+
+   For the extended task, every later generation is warm-started from the same
+   trained base checkpoint, while its synthetic training data is produced by
+   the previous extended generation. This is necessary because the extended
+   task does not reliably learn the induction circuit from random
+   initialization.
+
+   collapse.py evaluates every generation on the same real validation/test
+   distribution and records:
+       - loss and perplexity
+       - overall and answer accuracy
+       - previous-token and induction scores
+       - for the extended task: next-answer accuracy, q2 context-slot
+         distribution, q2 entropy, q2 symbol diversity and top-symbol share
+
+   Extended collapse results are saved to:
+       results/collapse/extended_warmstart/
+
+   Each collapse output folder contains collapse_metrics.json and one folder
+   per generation with the saved model checkpoint and training history.
 
 Step 4 - Run the interpretability analysis:
        (to be added: interpret/)
