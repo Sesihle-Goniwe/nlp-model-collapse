@@ -110,8 +110,19 @@ Step 3 - Run the model collapse loop:
    Each collapse output folder contains collapse_metrics.json and one folder
    per generation with the saved model checkpoint and training history.
 
-Step 4 - Run the interpretability analysis:
-       (to be added: interpret/)
+Step 4 - Run the interpretability analysis (Person 3):
+       python interpret/attention_maps.py
+       python interpret/embedding_pca.py
+       python interpret/head_ablation.py
+
+   These scripts inspect the generation checkpoints in results/collapse/
+   and save visual diagnostics to results/figures/:
+       - attention_collapse.png: Visualizes Layer 0 (Previous Token) and Layer 1
+         (Induction) attention matrices across generations.
+       - embedding_pca.png: Performs 2D PCA on token embedding weights to track
+         manifold contraction/representation collapse.
+       - ablation_impact.png: Evaluates accuracy impact when selectively knocking
+         out (L0, H0) and (L1, H0) across collapse generations.
 
 All results are saved in results/. All runs use fixed random seeds,
 so results repeat on the same machine and package versions.
@@ -119,13 +130,16 @@ so results repeat on the same machine and package versions.
 ------------------------------------------------------------
 FILES
 ------------------------------------------------------------
-data.py          Makes the symbol task data and the train/val/test split.
-model.py         The 2-layer attention-only transformer.
-train.py         Trains and tunes the model. Logs loss, accuracy,
-                 perplexity and two circuit scores.
-collapse.py      The model collapse loop (to be added).
-interpret/       Attention maps, embeddings and circuit analysis (to be added).
-results/         Plots and logs.
+data.py                     Makes the symbol task data and train/val/test splits.
+model.py                    The 2-layer attention-only transformer.
+train.py                    Trains and tunes the model. Logs loss, accuracy,
+                            perplexity, and circuit scores.
+collapse.py                 The recursive model collapse loop.
+interpret/
+    attention_maps.py       Plots L0 and L1 attention map degradation across generations.
+    embedding_pca.py        Tracks symbol embedding manifold contraction using PCA.
+    head_ablation.py        Causal knockout analysis for previous-token and induction heads.
+results/                    Plots, metrics (collapse_metrics.json), and model checkpoints.
 
 ------------------------------------------------------------
 NOTES ON DESIGN CHOICES
